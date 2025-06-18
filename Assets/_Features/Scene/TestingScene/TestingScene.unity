@@ -790,12 +790,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9d51e17d61236547b5f78833f482303, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _camera: {fileID: 1388809445}
   _cineCamera: {fileID: 1707807580}
   _cineOrbitFollow: {fileID: 1707807582}
   _cameraTarget: {fileID: 1356272869}
   _rotSpeed: 100
+  _rotAcceleration: 5
+  _rotInnertia: 3
   _flipRotX: 0
   _flipRotY: 1
+  _minXRot: 15
+  _minYRot: 80
+  _moveSpeed: 5
+  _moveAcceleration: 5
+  _moveInnertia: 3
+  _flipMoveX: 1
+  _flipMoveY: 1
 --- !u!1 &960402685
 GameObject:
   m_ObjectHideFlags: 0
@@ -1321,7 +1331,7 @@ MonoBehaviour:
   TargetOffset: {x: 0, y: 0, z: 0}
   TrackerSettings:
     BindingMode: 4
-    PositionDamping: {x: 1, y: 1, z: 1}
+    PositionDamping: {x: 0, y: 0, z: 0}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
@@ -1352,7 +1362,7 @@ MonoBehaviour:
   VerticalAxis:
     Value: 17.5
     Center: 17.5
-    Range: {x: -10, y: 45}
+    Range: {x: 15, y: 80}
     Wrap: 0
     Recentering:
       Enabled: 0
