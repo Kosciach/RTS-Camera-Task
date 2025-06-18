@@ -33,6 +33,8 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         [BoxGroup("Settings"), SerializeField] private float _moveInnertia = 3;
         [BoxGroup("Settings"), SerializeField] private bool _flipMoveX = true;
         [BoxGroup("Settings"), SerializeField] private bool _flipMoveY = true;
+        [BoxGroup("Settings"), SerializeField] private bool _useEdgeScrolling = true;
+        [BoxGroup("Settings"), SerializeField, Range(0, 0.5f)] private float _edgeScrollingZone = 0.1f;
         
         //Input
         private Vector2 _mouseDeltaInput;
@@ -49,6 +51,7 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         private Vector3 _move;
         private Vector3 _moveVelocity;
         private Vector3 _moveTarget;
+        private Vector2 _edgeScrolling;
         
         private void Awake()
         {
@@ -78,12 +81,47 @@ namespace Kosciach.RTSCameraTask.RTSCamera
 
         private void Update()
         {
-            float deltaTime = Mathf.Min(Time.unscaledDeltaTime, 0.033f);
-            
+            float deltaTime = Mathf.Min(Time.deltaTime, 0.033f);
+
+            CheckEdgeScrolling();
             Rotate(deltaTime);
             Move(deltaTime);
         }
 
+        private void CheckEdgeScrolling()
+        {
+            _edgeScrolling = Vector2.zero;
+            
+            if(!_useEdgeScrolling)
+            {
+                return;
+            }
+
+            Vector3 mousePos = UnityEngine.Input.mousePosition;
+            
+            //Width
+            float widthZone = Screen.width * _edgeScrollingZone;
+            if (mousePos.x >= 0 && mousePos.x <= widthZone)//Left
+            {
+                _edgeScrolling.x = -1;
+            }
+            else if (mousePos.x <= Screen.width && mousePos.x >= Screen.width - widthZone)//Right
+            {
+                _edgeScrolling.x = 1;
+            }
+
+            //Height
+            float heightZone = Screen.height * _edgeScrollingZone;
+            if (mousePos.y >= 0 && mousePos.y <= heightZone)//Down
+            {
+                _edgeScrolling.y = -1;
+            }
+            else if (mousePos.y <= Screen.height && mousePos.y >= Screen.height - heightZone)//Up
+            {
+                _edgeScrolling.y = 1;
+            }
+        }
+        
         private void Rotate(float p_deltaTime)
         {
             Vector2 rotDir = Vector2.zero;
@@ -128,7 +166,6 @@ namespace Kosciach.RTSCameraTask.RTSCamera
             int flipX = (_flipMoveX ? -1 : 1);
             int flipY = (_flipMoveY ? -1 : 1);
             
-            
             //Set input (mouse > wsad)
             Vector2 input = Vector2.zero;
             float speed = 0;
@@ -141,6 +178,11 @@ namespace Kosciach.RTSCameraTask.RTSCamera
             else if (_wsadInput.magnitude > 0)
             {
                 input = -_wsadInput;
+                speed = _moveWSADSpeed;
+            }
+            else if (_edgeScrolling.magnitude > 0)
+            {
+                input = -_edgeScrolling;
                 speed = _moveWSADSpeed;
             }
             

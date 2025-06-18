@@ -801,11 +801,14 @@ MonoBehaviour:
   _flipRotY: 1
   _minXRot: 15
   _minYRot: 80
-  _moveSpeed: 5
+  _moveMouseSpeed: 5
+  _moveWSADSpeed: 10
   _moveAcceleration: 5
   _moveInnertia: 3
   _flipMoveX: 1
   _flipMoveY: 1
+  _useEdgeScrolling: 1
+  _edgeScrollingOffset: 0
 --- !u!1 &960402685
 GameObject:
   m_ObjectHideFlags: 0
