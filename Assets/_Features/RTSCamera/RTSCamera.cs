@@ -27,7 +27,8 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         [BoxGroup("Settings"), SerializeField] private float _minYRot = 80;
         
         [Header("Move"), HorizontalLine]
-        [BoxGroup("Settings"), SerializeField] private float _moveSpeed = 5;
+        [BoxGroup("Settings"), SerializeField] private float _moveMouseSpeed = 5;
+        [BoxGroup("Settings"), SerializeField] private float _moveWSADSpeed = 10;
         [BoxGroup("Settings"), SerializeField] private float _moveAcceleration = 5;
         [BoxGroup("Settings"), SerializeField] private float _moveInnertia = 3;
         [BoxGroup("Settings"), SerializeField] private bool _flipMoveX = true;
@@ -108,6 +109,7 @@ namespace Kosciach.RTSCameraTask.RTSCamera
 
             //Clamp current rot
             _cineOrbitFollow.VerticalAxis.Range = new Vector2(_minXRot, _minYRot);
+            _rot.x = _cineOrbitFollow.HorizontalAxis.ClampValue(_rot.x);
             _rot.y = _cineOrbitFollow.VerticalAxis.ClampValue(_rot.y);
             
             //Apply rot to cinemachine
@@ -122,17 +124,33 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         {
             Vector3 moveDir = Vector3.zero;
             
-            //Acceleration
+            //Set flips
+            int flipX = (_flipMoveX ? -1 : 1);
+            int flipY = (_flipMoveY ? -1 : 1);
+            
+            
+            //Set input (mouse > wsad)
+            Vector2 input = Vector2.zero;
+            float speed = 0;
+            
             if (_isLMB)
             {
-                //Set flips
-                int flipX = (_flipMoveX ? -1 : 1);
-                int flipY = (_flipMoveY ? -1 : 1);
-                
+                input = _mouseDeltaInput;
+                speed = _moveMouseSpeed;
+            }
+            else if (_wsadInput.magnitude > 0)
+            {
+                input = -_wsadInput;
+                speed = _moveWSADSpeed;
+            }
+            
+            //Acceleration
+            if (input.magnitude != 0)
+            {
                 //Calculate current direction
-                moveDir = (_cameraTarget.forward * _mouseDeltaInput.y * flipY)
-                        + (_cameraTarget.right * _mouseDeltaInput.x * flipX);
-                moveDir *= _moveSpeed * p_deltaTime;
+                moveDir = (_cameraTarget.forward * input.y * flipY)
+                          + (_cameraTarget.right * input.x * flipX);
+                moveDir *= speed * p_deltaTime;
                 
                 //Lerp velocity to direction
                 _moveVelocity = Vector3.Lerp(_moveVelocity, moveDir, _moveAcceleration * p_deltaTime);
@@ -160,7 +178,7 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         
         private void ReadWSADInput(InputAction.CallbackContext p_ctx)
         {
-            _mouseDeltaInput = p_ctx.ReadValue<Vector2>();
+            _wsadInput = p_ctx.ReadValue<Vector2>();
         }
         
         private void ReadLMBInput(InputAction.CallbackContext p_ctx)
