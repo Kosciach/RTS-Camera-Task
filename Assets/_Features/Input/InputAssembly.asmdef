@@ -1,11 +1,8 @@
 {
-    "name": "RTSCameraAssembly",
+    "name": "InputAssembly",
     "rootNamespace": "",
     "references": [
-        "GUID:40f68d035bcc35447ba4c299908e8490",
-        "GUID:75469ad4d38634e559750d17036d5f7c",
-        "GUID:776d03a35f1b52c4a9aed9f56d7b4229",
-        "GUID:4307f53044263cf4b835bd812fc161a4"
+        "GUID:75469ad4d38634e559750d17036d5f7c"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
