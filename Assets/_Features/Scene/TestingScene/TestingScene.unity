@@ -752,8 +752,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 888877798}
-  - component: {fileID: 888877799}
   - component: {fileID: 888877800}
+  - component: {fileID: 888877804}
+  - component: {fileID: 888877803}
+  - component: {fileID: 888877802}
+  - component: {fileID: 888877801}
   m_Layer: 0
   m_Name: RTSCamera
   m_TagString: Untagged
@@ -779,23 +782,6 @@ Transform:
   - {fileID: 1356272869}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &888877799
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 888877797}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9d51e17d61236547b5f78833f482303, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _cineCamera: {fileID: 1707807580}
-  _cineOrbitFollow: {fileID: 1707807582}
-  _cameraTarget: {fileID: 1356272869}
-  _config: {fileID: 11400000, guid: 03dd568a1b0763f48962c71f09c0c99f, type: 2}
-  _bounds: {fileID: 888877800}
 --- !u!114 &888877800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -813,6 +799,62 @@ MonoBehaviour:
   - {x: 13.332743, y: -9.222403}
   - {x: -12.784994, y: -9.216772}
   - {x: -10.7251425, y: 10.287424}
+--- !u!114 &888877801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888877797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc1de896387a1b54f8da8f956f3b1eb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cineOrbitFollow: {fileID: 1707807582}
+--- !u!114 &888877802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888877797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d54045cbf1a24e4880b7dfbaab2aeba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cineOrbitFollow: {fileID: 1707807582}
+  _cameraTarget: {fileID: 1356272869}
+  _bounds: {fileID: 888877800}
+--- !u!114 &888877803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888877797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 200137ff4697f014498698082a05deb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cameraTarget: {fileID: 1356272869}
+  _bounds: {fileID: 888877800}
+--- !u!114 &888877804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888877797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c44c96f7f7e621447a3362484fbf7430, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _config: {fileID: 11400000, guid: 03dd568a1b0763f48962c71f09c0c99f, type: 2}
+  _inputMgr: {fileID: 717255779}
 --- !u!1 &960402685
 GameObject:
   m_ObjectHideFlags: 0
