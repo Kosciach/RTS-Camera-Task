@@ -12,8 +12,8 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         //Input
         private Vector2 _mouseDeltaInput;
         private Vector2 _wsadInput;
-        private bool _isLMB;
-        private bool _isRMB;
+        private bool _canMoveInput;
+        private bool _canRotateInput;
         
         //Move
         private Vector3 _move;
@@ -56,7 +56,7 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         {
             _edgeScrolling = Vector2.zero;
             
-            if(!_config.UseEdgeScrolling || _isRMB)
+            if(!_config.UseEdgeScrolling || _canRotateInput)
             {
                 return;
             }
@@ -95,7 +95,7 @@ namespace Kosciach.RTSCameraTask.RTSCamera
             Vector2 input = Vector2.zero;
             float speed = 0;
             
-            if (_isLMB)
+            if (_canMoveInput)
             {
                 input = _mouseDeltaInput;
                 speed = _config.MoveMouseSpeed;
@@ -151,12 +151,12 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         
         private void ReadLMBInput(InputAction.CallbackContext p_ctx)
         {
-            _isLMB = p_ctx.ReadValue<float>() > 0;
+            _canMoveInput = p_ctx.ReadValue<float>() > 0;
         }
         
         private void ReadRMBInput(InputAction.CallbackContext p_ctx)
         {
-            _isRMB = p_ctx.ReadValue<float>() > 0;
+            _canRotateInput = p_ctx.ReadValue<float>() > 0;
         }
 #endregion
     }

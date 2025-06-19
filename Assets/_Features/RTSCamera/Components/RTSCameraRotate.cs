@@ -15,7 +15,7 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         
         //Input
         private Vector2 _mouseDeltaInput;
-        private bool _isRMB;
+        private bool _canRotateInput;
         
         //Rot
         private Vector2 _rot;
@@ -45,7 +45,7 @@ namespace Kosciach.RTSCameraTask.RTSCamera
             Vector2 rotDir = Vector2.zero;
             
             //Acceleration
-            if (_isRMB)
+            if (_canRotateInput)
             {
                 //Calculate current direction
                 rotDir.x = _mouseDeltaInput.x * (_config.FlipRotX ? -1 : 1);
@@ -84,7 +84,7 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         
         private void ReadRMBInput(InputAction.CallbackContext p_ctx)
         {
-            _isRMB = p_ctx.ReadValue<float>() > 0;
+            _canRotateInput = p_ctx.ReadValue<float>() > 0;
         }
 #endregion
     }
