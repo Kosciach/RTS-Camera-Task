@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e551c9b3d767b9f43921b33b094c927c, type: 3}
+  m_Name: DefaultConfig
+  m_EditorClassIdentifier: 
+  _rotSpeed: 100
+  _rotAcceleration: 5
+  _rotInnertia: 3
+  _flipRotX: 0
+  _flipRotY: 1
+  _minXRot: 15
+  _minYRot: 80
+  _moveMouseSpeed: 5
+  _moveWSADSpeed: 10
+  _moveAcceleration: 5
+  _moveInnertia: 3
+  _flipMoveX: 1
+  _flipMoveY: 1
+  _useEdgeScrolling: 1
+  _edgeScrollingZoneFactor: 0.1
+  _zoomSpeed: 300
+  _zoomSmoothing: 200
+  _minZoom: 10
+  _maxZoom: 20
+  _maxZoomTilt: 10

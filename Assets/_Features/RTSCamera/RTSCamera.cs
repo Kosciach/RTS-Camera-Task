@@ -1,4 +1,3 @@
-using System;
 using NaughtyAttributes;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -11,37 +10,11 @@ namespace Kosciach.RTSCameraTask.RTSCamera
     public class RTSCamera : MonoBehaviour
     {
         private InputManager _inputMgr;
-
-        [BoxGroup("References"), SerializeField] private Camera _camera;
+        
         [BoxGroup("References"), SerializeField] private CinemachineCamera _cineCamera;
         [BoxGroup("References"), SerializeField] private CinemachineOrbitalFollow _cineOrbitFollow;
         [BoxGroup("References"), SerializeField] private Transform _cameraTarget;
-        
-        [Header("Rot"), HorizontalLine]
-        [BoxGroup("Settings"), SerializeField] private float _rotSpeed = 100;
-        [BoxGroup("Settings"), SerializeField] private float _rotAcceleration = 5;
-        [BoxGroup("Settings"), SerializeField] private float _rotInnertia = 3;
-        [BoxGroup("Settings"), SerializeField] private bool _flipRotX;
-        [BoxGroup("Settings"), SerializeField] private bool _flipRotY = true;
-        [BoxGroup("Settings"), SerializeField] private float _minXRot = 15;
-        [BoxGroup("Settings"), SerializeField] private float _minYRot = 80;
-        
-        [Header("Move"), HorizontalLine]
-        [BoxGroup("Settings"), SerializeField] private float _moveMouseSpeed = 5;
-        [BoxGroup("Settings"), SerializeField] private float _moveWSADSpeed = 10;
-        [BoxGroup("Settings"), SerializeField] private float _moveAcceleration = 5;
-        [BoxGroup("Settings"), SerializeField] private float _moveInnertia = 3;
-        [BoxGroup("Settings"), SerializeField] private bool _flipMoveX = true;
-        [BoxGroup("Settings"), SerializeField] private bool _flipMoveY = true;
-        [BoxGroup("Settings"), SerializeField] private bool _useEdgeScrolling = true;
-        [BoxGroup("Settings"), SerializeField, Range(0, 0.5f)] private float _edgeScrollingZoneFactor = 0.1f;
-        
-        [Header("Zoom"), HorizontalLine]
-        [BoxGroup("Settings"), SerializeField] private float _zoomSpeed = 2;
-        [BoxGroup("Settings"), SerializeField] private float _zoomSmoothing = 2;
-        [BoxGroup("Settings"), SerializeField] private float _minZoom = 10;
-        [BoxGroup("Settings"), SerializeField] private float _maxZoom = 20;
-        [BoxGroup("Settings"), SerializeField] private float _maxZoomTilt = 10;
+        [BoxGroup("References"), SerializeField] private RTSCameraConfig _config;
         
         //Input
         private Vector2 _mouseDeltaInput;
@@ -69,6 +42,8 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         private void Awake()
         {
             _inputMgr = FindFirstObjectByType<InputManager>();
+            
+            SetStartZoom();
             
             _inputMgr.Inputs.Camera.MouseDelta.performed += ReadMouseDeltaInput;
             _inputMgr.Inputs.Camera.MouseDelta.canceled += ReadMouseDeltaInput;
@@ -107,11 +82,16 @@ namespace Kosciach.RTSCameraTask.RTSCamera
             Zoom(deltaTime);
         }
 
+        private void SetStartZoom()
+        {
+            _targetZoom = _cineOrbitFollow.Radius;
+        }
+
         private void CheckEdgeScrolling()
         {
             _edgeScrolling = Vector2.zero;
             
-            if(!_useEdgeScrolling)
+            if(!_config.UseEdgeScrolling)
             {
                 return;
             }
@@ -123,7 +103,7 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         
         private int GetEdgeScroll(float p_position, float p_max)
         {
-            float zone = p_max * _edgeScrollingZoneFactor;
+            float zone = p_max * _config.EdgeScrollingZoneFactor;
 
             //Left, Down
             if (p_position >= 0 && p_position <= zone)
@@ -148,23 +128,23 @@ namespace Kosciach.RTSCameraTask.RTSCamera
             if (_isRMB)
             {
                 //Calculate current direction
-                rotDir.x = _mouseDeltaInput.x * (_flipRotX ? -1 : 1);
-                rotDir.y = _mouseDeltaInput.y * (_flipRotY ? -1 : 1);
-                rotDir *= _rotSpeed * p_deltaTime;
+                rotDir.x = _mouseDeltaInput.x * (_config.FlipRotX ? -1 : 1);
+                rotDir.y = _mouseDeltaInput.y * (_config.FlipRotY ? -1 : 1);
+                rotDir *= _config.RotSpeed * p_deltaTime;
                 
                 //Lerp velocity to direction
-                _rotVelocity = Vector2.Lerp(_rotVelocity, rotDir, _rotAcceleration * p_deltaTime);
+                _rotVelocity = Vector2.Lerp(_rotVelocity, rotDir, _config.RotAcceleration * p_deltaTime);
             }
             else //Inertia
             {
-                _rotVelocity = Vector2.Lerp(_rotVelocity, Vector2.zero, _rotInnertia * p_deltaTime);
+                _rotVelocity = Vector2.Lerp(_rotVelocity, Vector2.zero, _config.RotInnertia * p_deltaTime);
             }
             
             //Apply current rot
             _rot += _rotVelocity;
 
             //Clamp current rot
-            _cineOrbitFollow.VerticalAxis.Range = new Vector2(_minXRot, _minYRot);
+            _cineOrbitFollow.VerticalAxis.Range = new Vector2(_config.MinXRot, _config.MinYRot);
             _rot.x = _cineOrbitFollow.HorizontalAxis.ClampValue(_rot.x);
             _rot.y = _cineOrbitFollow.VerticalAxis.ClampValue(_rot.y);
             
@@ -178,11 +158,9 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         
         private void Move(float p_deltaTime)
         {
-            Vector3 moveDir = Vector3.zero;
-            
             //Set flips
-            int flipX = (_flipMoveX ? -1 : 1);
-            int flipY = (_flipMoveY ? -1 : 1);
+            int flipX = (_config.FlipMoveX ? -1 : 1);
+            int flipY = (_config.FlipMoveY ? -1 : 1);
             
             //Set input (mouse > wsad)
             Vector2 input = Vector2.zero;
@@ -191,33 +169,33 @@ namespace Kosciach.RTSCameraTask.RTSCamera
             if (_isLMB)
             {
                 input = _mouseDeltaInput;
-                speed = _moveMouseSpeed;
+                speed = _config.MoveMouseSpeed;
             }
             else if (_wsadInput.magnitude > 0)
             {
                 input = -_wsadInput;
-                speed = _moveWSADSpeed;
+                speed = _config.MoveWSADSpeed;
             }
             else if (_edgeScrolling.magnitude > 0)
             {
                 input = -_edgeScrolling;
-                speed = _moveWSADSpeed;
+                speed = _config.MoveWSADSpeed;
             }
             
             //Acceleration
             if (input.magnitude != 0)
             {
                 //Calculate current direction
-                moveDir = (_cameraTarget.forward * input.y * flipY)
-                          + (_cameraTarget.right * input.x * flipX);
+                Vector3 moveDir = (_cameraTarget.forward * input.y * flipY)
+                                + (_cameraTarget.right * input.x * flipX);
                 moveDir *= speed * p_deltaTime;
                 
                 //Lerp velocity to direction
-                _moveVelocity = Vector3.Lerp(_moveVelocity, moveDir, _moveAcceleration * p_deltaTime);
+                _moveVelocity = Vector3.Lerp(_moveVelocity, moveDir, _config.MoveAcceleration * p_deltaTime);
             }
             else //Inertia
             {
-                _moveVelocity = Vector3.Lerp(_moveVelocity, Vector3.zero, _moveInnertia * p_deltaTime);
+                _moveVelocity = Vector3.Lerp(_moveVelocity, Vector3.zero, _config.MoveInnertia * p_deltaTime);
             }
             
             //Apply current move
@@ -234,11 +212,11 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         {
             if (_scrollInput != 0)
             {
-                _targetZoom += -_scrollInput * _zoomSpeed * p_deltaTime;
-                _targetZoom = Mathf.Clamp(_targetZoom, _minZoom, _maxZoom);
+                _targetZoom += -_scrollInput * _config.ZoomSpeed * p_deltaTime;
+                _targetZoom = Mathf.Clamp(_targetZoom, _config.MinZoom, _config.MaxZoom);
             }
             
-            _cineOrbitFollow.Radius = Mathf.SmoothDamp(_cineOrbitFollow.Radius, _targetZoom, ref _zoomSmoothDampRef, _zoomSmoothing * p_deltaTime);
+            _cineOrbitFollow.Radius = Mathf.SmoothDamp(_cineOrbitFollow.Radius, _targetZoom, ref _zoomSmoothDampRef, _config.ZoomSmoothing * p_deltaTime);
         }
 
 #region ReadInputs
