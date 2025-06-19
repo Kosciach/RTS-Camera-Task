@@ -34,13 +34,21 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         [BoxGroup("Settings"), SerializeField] private bool _flipMoveX = true;
         [BoxGroup("Settings"), SerializeField] private bool _flipMoveY = true;
         [BoxGroup("Settings"), SerializeField] private bool _useEdgeScrolling = true;
-        [BoxGroup("Settings"), SerializeField, Range(0, 0.5f)] private float _edgeScrollingZone = 0.1f;
+        [BoxGroup("Settings"), SerializeField, Range(0, 0.5f)] private float _edgeScrollingZoneFactor = 0.1f;
+        
+        [Header("Zoom"), HorizontalLine]
+        [BoxGroup("Settings"), SerializeField] private float _zoomSpeed = 2;
+        [BoxGroup("Settings"), SerializeField] private float _zoomSmoothing = 2;
+        [BoxGroup("Settings"), SerializeField] private float _minZoom = 10;
+        [BoxGroup("Settings"), SerializeField] private float _maxZoom = 20;
+        [BoxGroup("Settings"), SerializeField] private float _maxZoomTilt = 10;
         
         //Input
         private Vector2 _mouseDeltaInput;
         private Vector2 _wsadInput;
         private bool _isLMB;
         private bool _isRMB;
+        private float _scrollInput;
         
         //Rot
         private Vector2 _rot;
@@ -52,6 +60,11 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         private Vector3 _moveVelocity;
         private Vector3 _moveTarget;
         private Vector2 _edgeScrolling;
+        
+        //Zoom
+        private float _targetZoom;
+        private float _zoomSmoothDampRef;
+        
         
         private void Awake()
         {
@@ -65,6 +78,8 @@ namespace Kosciach.RTSCameraTask.RTSCamera
             _inputMgr.Inputs.Camera.LMB.canceled += ReadLMBInput;
             _inputMgr.Inputs.Camera.RMB.performed += ReadRMBInput;
             _inputMgr.Inputs.Camera.RMB.canceled += ReadRMBInput;
+            _inputMgr.Inputs.Camera.Scroll.performed += ReadScrollInput;
+            _inputMgr.Inputs.Camera.Scroll.canceled += ReadScrollInput;
         }
 
         private void OnDestroy()
@@ -77,6 +92,9 @@ namespace Kosciach.RTSCameraTask.RTSCamera
             _inputMgr.Inputs.Camera.LMB.canceled -= ReadLMBInput;
             _inputMgr.Inputs.Camera.RMB.performed -= ReadRMBInput;
             _inputMgr.Inputs.Camera.RMB.canceled -= ReadRMBInput;
+            _inputMgr.Inputs.Camera.Scroll.performed -= ReadScrollInput;
+            _inputMgr.Inputs.Camera.Scroll.canceled -= ReadScrollInput;
+            
         }
 
         private void Update()
@@ -86,6 +104,7 @@ namespace Kosciach.RTSCameraTask.RTSCamera
             CheckEdgeScrolling();
             Rotate(deltaTime);
             Move(deltaTime);
+            Zoom(deltaTime);
         }
 
         private void CheckEdgeScrolling()
@@ -98,28 +117,27 @@ namespace Kosciach.RTSCameraTask.RTSCamera
             }
 
             Vector3 mousePos = UnityEngine.Input.mousePosition;
-            
-            //Width
-            float widthZone = Screen.width * _edgeScrollingZone;
-            if (mousePos.x >= 0 && mousePos.x <= widthZone)//Left
+            _edgeScrolling.x = GetEdgeScroll(mousePos.x, Screen.width);
+            _edgeScrolling.y = GetEdgeScroll(mousePos.y, Screen.height);
+        }
+        
+        private int GetEdgeScroll(float p_position, float p_max)
+        {
+            float zone = p_max * _edgeScrollingZoneFactor;
+
+            //Left, Down
+            if (p_position >= 0 && p_position <= zone)
             {
-                _edgeScrolling.x = -1;
+                return -1;
             }
-            else if (mousePos.x <= Screen.width && mousePos.x >= Screen.width - widthZone)//Right
+            
+            //Right, Up
+            if (p_position <= p_max && p_position >= p_max - zone)
             {
-                _edgeScrolling.x = 1;
+                return 1;
             }
 
-            //Height
-            float heightZone = Screen.height * _edgeScrollingZone;
-            if (mousePos.y >= 0 && mousePos.y <= heightZone)//Down
-            {
-                _edgeScrolling.y = -1;
-            }
-            else if (mousePos.y <= Screen.height && mousePos.y >= Screen.height - heightZone)//Up
-            {
-                _edgeScrolling.y = 1;
-            }
+            return 0;
         }
         
         private void Rotate(float p_deltaTime)
@@ -212,6 +230,17 @@ namespace Kosciach.RTSCameraTask.RTSCamera
             _cameraTarget.position += _moveVelocity;
         }
 
+        private void Zoom(float p_deltaTime)
+        {
+            if (_scrollInput != 0)
+            {
+                _targetZoom += -_scrollInput * _zoomSpeed * p_deltaTime;
+                _targetZoom = Mathf.Clamp(_targetZoom, _minZoom, _maxZoom);
+            }
+            
+            _cineOrbitFollow.Radius = Mathf.SmoothDamp(_cineOrbitFollow.Radius, _targetZoom, ref _zoomSmoothDampRef, _zoomSmoothing * p_deltaTime);
+        }
+
 #region ReadInputs
         private void ReadMouseDeltaInput(InputAction.CallbackContext p_ctx)
         {
@@ -231,6 +260,11 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         private void ReadRMBInput(InputAction.CallbackContext p_ctx)
         {
             _isRMB = p_ctx.ReadValue<float>() > 0;
+        }
+        
+        private void ReadScrollInput(InputAction.CallbackContext p_ctx)
+        {
+            _scrollInput = p_ctx.ReadValue<float>();
         }
 #endregion
     }

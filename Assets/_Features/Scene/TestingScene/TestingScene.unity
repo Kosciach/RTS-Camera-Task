@@ -808,7 +808,12 @@ MonoBehaviour:
   _flipMoveX: 1
   _flipMoveY: 1
   _useEdgeScrolling: 1
-  _edgeScrollingOffset: 0
+  _edgeScrollingZoneFactor: 0.1
+  _zoomSpeed: 300
+  _zoomSmoothing: 200
+  _minZoom: 10
+  _maxZoom: 20
+  _maxZoomTilt: 10
 --- !u!1 &960402685
 GameObject:
   m_ObjectHideFlags: 0
