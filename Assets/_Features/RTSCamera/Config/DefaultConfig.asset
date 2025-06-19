@@ -28,7 +28,7 @@ MonoBehaviour:
   _useEdgeScrolling: 1
   _edgeScrollingZoneFactor: 0.1
   _zoomSpeed: 300
-  _zoomSmoothing: 200
+  _zoomSmoothing: 50
   _minZoom: 10
   _maxZoom: 20
   _maxZoomTilt: 10

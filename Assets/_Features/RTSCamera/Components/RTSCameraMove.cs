@@ -1,12 +1,9 @@
 using NaughtyAttributes;
-using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Kosciach.RTSCameraTask.RTSCamera
 {
-    using Input;
-    
     public class RTSCameraMove : RTSCameraComponent
     {
         [BoxGroup("References"), SerializeField] private Transform _cameraTarget;
