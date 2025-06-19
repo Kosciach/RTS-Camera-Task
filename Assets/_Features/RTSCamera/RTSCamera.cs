@@ -14,7 +14,9 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         [BoxGroup("References"), SerializeField] private CinemachineCamera _cineCamera;
         [BoxGroup("References"), SerializeField] private CinemachineOrbitalFollow _cineOrbitFollow;
         [BoxGroup("References"), SerializeField] private Transform _cameraTarget;
+        [HorizontalLine]
         [BoxGroup("References"), SerializeField] private RTSCameraConfig _config;
+        [BoxGroup("References"), SerializeField] private RTSCameraBounds _bounds;
         
         //Input
         private Vector2 _mouseDeltaInput;
@@ -91,7 +93,7 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         {
             _edgeScrolling = Vector2.zero;
             
-            if(!_config.UseEdgeScrolling)
+            if(!_config.UseEdgeScrolling || _isRMB)
             {
                 return;
             }
@@ -104,13 +106,13 @@ namespace Kosciach.RTSCameraTask.RTSCamera
         private int GetEdgeScroll(float p_position, float p_max)
         {
             float zone = p_max * _config.EdgeScrollingZoneFactor;
-
+            
             //Left, Down
             if (p_position >= 0 && p_position <= zone)
             {
                 return -1;
             }
-            
+
             //Right, Up
             if (p_position <= p_max && p_position >= p_max - zone)
             {
@@ -202,10 +204,11 @@ namespace Kosciach.RTSCameraTask.RTSCamera
             _move += _moveVelocity;
 
             //Clamp current move
-
+            Vector3 newPos = _cameraTarget.position + _moveVelocity;
+            newPos = _bounds.ClampPos(newPos);
             
             //Apply move to cinemachine target
-            _cameraTarget.position += _moveVelocity;
+            _cameraTarget.position = newPos;
         }
 
         private void Zoom(float p_deltaTime)

@@ -753,6 +753,7 @@ GameObject:
   m_Component:
   - component: {fileID: 888877798}
   - component: {fileID: 888877799}
+  - component: {fileID: 888877800}
   m_Layer: 0
   m_Name: RTSCamera
   m_TagString: Untagged
@@ -794,6 +795,24 @@ MonoBehaviour:
   _cineOrbitFollow: {fileID: 1707807582}
   _cameraTarget: {fileID: 1356272869}
   _config: {fileID: 11400000, guid: 03dd568a1b0763f48962c71f09c0c99f, type: 2}
+  _bounds: {fileID: 888877800}
+--- !u!114 &888877800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888877797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34ee8a0b692553d4a8061d76cd00bc8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _points:
+  - {x: 10.142405, y: 10.277391}
+  - {x: 13.332743, y: -9.222403}
+  - {x: -12.784994, y: -9.216772}
+  - {x: -10.7251425, y: 10.287424}
 --- !u!1 &960402685
 GameObject:
   m_ObjectHideFlags: 0
