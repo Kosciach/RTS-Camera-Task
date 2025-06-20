@@ -1,6 +1,6 @@
 # Kamera RTS
 
-[![YouTube](https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+[![YouTube](https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/lO5DglInek4)
 
 Projekt ma na celu stworzenie kamery według podanych wytycznych na potrzeby zadania rekrutacyjnego.
 Moim celem było aby cały system był elastyczny, solidny ale i zarazem prosty.
